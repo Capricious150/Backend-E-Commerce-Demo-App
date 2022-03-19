@@ -29,6 +29,7 @@ router.get('/:id', async (req, res) => {
     });
     if (!singleProduct){
       res.status(404).json({message: "No product with that ID was found"})
+      return;
     }
     res.status(200).json(singleProduct);
   } catch (err) {
@@ -72,7 +73,15 @@ router.post('/', (req, res) => {
 // update product
 router.put('/:id', (req, res) => {
   // update product data
-  Product.update(req.body, {
+  Product.update(
+  {
+    product_name: req.body.product_id,
+    price: req.body.price,
+    stock: req.body.stock,
+    category_id: req.body.category_id,
+    tagIds: req.body.tagIds
+  },
+  {
     where: {
       id: req.params.id,
     },
@@ -114,13 +123,14 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
   try {
-    const singleProductDelete = await Product.destroy(req.params.id, {
+    const singleProductDelete = await Product.destroy({
       where: {
         id: req.params.id,
       }
     });
     if (!singleProductDelete){
       res.status(404).json({message: "No product with that ID found"})
+      return;
     }
     res.status(200).json(singleProductDelete)   
   }
